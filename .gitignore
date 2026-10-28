@@ -1,0 +1,44 @@
+# Dependencies
+node_modules
+
+# Build output
+dist
+dist-ssr
+coverage
+
+# Environment - never commit real keys
+.env
+.env.*
+!.env.example
+supabase/.env.local
+supabase/.env.*
+!supabase/.env.local.example
+
+# Supabase CLI local state
+supabase/.branches
+supabase/.temp
+
+# Generated database types (regenerate with `npm run db:types`)
+database.generated.ts
+
+# Logs
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Editors / OS
+.vscode/*
+!.vscode/extensions.json
+.idea
+.DS_Store
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# Misc
+*.local

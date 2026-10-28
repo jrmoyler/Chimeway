@@ -1,0 +1,61 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20.19'
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Typecheck
+        run: npm run typecheck
+
+      - name: Lint
+        run: npm run lint
+
+      # Covers both the app and the database. The schema, RLS policies and
+      # storage rules run against real PostgreSQL via PGlite (WASM), so no
+      # database service is needed here.
+      - name: Test
+        run: npm test
+
+      - name: Build
+        run: npx vite build
+        env:
+          # Placeholders: the build must not depend on real project values, and
+          # a build that silently inlined a secret would be caught by the audit
+          # step below.
+          VITE_SUPABASE_URL: https://example.supabase.co
+          VITE_SUPABASE_ANON_KEY: ci-placeholder-anon-key
+
+      # Matches on credential shapes rather than keywords, and skips
+      # sourcemaps: library documentation legitimately mentions `service_role`,
+      # and a check that cries wolf on every build gets switched off.
+      - name: Assert no server secrets in the client bundle
+        run: npm run audit:secrets
+
+  edge-functions:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: denoland/setup-deno@v2
+        with:
+          deno-version: v2.x
+
+      # Edge functions run on Deno, not on the browser toolchain, so they are
+      # type-checked separately.
+      - name: Typecheck edge functions
+        run: deno check supabase/functions/ai/index.ts

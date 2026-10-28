@@ -1,0 +1,148 @@
+@import "tailwindcss";
+@plugin "@tailwindcss/typography";
+
+/* Dark mode is driven by a `.dark` class on <html>, set by the theme store. */
+@custom-variant dark (&:where(.dark, .dark *));
+
+/*
+ * Semantic design tokens.
+ *
+ * Components reference role-based names (bg-surface, text-secondary) rather
+ * than palette names, so a single utility works in both themes. This removes
+ * the `bg-x-light dark:bg-x-dark` duplication the previous build used, and with
+ * it the class of bug where a dark-only colour leaked into the light theme.
+ */
+@theme {
+  --color-base: var(--app-base);
+  --color-sidebar: var(--app-sidebar);
+  --color-surface: var(--app-surface);
+  --color-raised: var(--app-raised);
+  --color-hover: var(--app-hover);
+  --color-sunken: var(--app-sunken);
+
+  --color-ink: var(--app-ink);
+  --color-ink-muted: var(--app-ink-muted);
+  --color-ink-subtle: var(--app-ink-subtle);
+
+  --color-line: var(--app-line);
+  --color-accent: var(--app-accent);
+  --color-accent-hover: var(--app-accent-hover);
+  --color-accent-ink: #ffffff;
+
+  --color-danger: var(--app-danger);
+  --color-danger-hover: var(--app-danger-hover);
+
+  --color-status-active: #2bac76;
+  --color-status-idle: #e0a33b;
+  --color-status-dnd: #d9534f;
+}
+
+:root {
+  color-scheme: light;
+
+  --app-base: #f3f3f3;
+  --app-sidebar: #f8f8f8;
+  --app-surface: #ffffff;
+  --app-raised: #ffffff;
+  --app-hover: #e9e9e9;
+  --app-sunken: #f1f1f1;
+
+  --app-ink: #1c1c1c;
+  --app-ink-muted: #5c5c5c;
+  --app-ink-subtle: #7a7a7a;
+
+  --app-line: #dcdcdc;
+  --app-accent: #1264a3;
+  --app-accent-hover: #0f558b;
+
+  --app-danger: #c0392b;
+  --app-danger-hover: #a33224;
+
+  --app-scrollbar: rgb(0 0 0 / 0.22);
+  --app-scrollbar-hover: rgb(0 0 0 / 0.38);
+}
+
+.dark {
+  color-scheme: dark;
+
+  --app-base: #16181b;
+  --app-sidebar: #1e2125;
+  --app-surface: #222529;
+  --app-raised: #2a2e33;
+  --app-hover: #343941;
+  --app-sunken: #1a1d21;
+
+  --app-ink: #e4e4e4;
+  --app-ink-muted: #a7a7a7;
+  --app-ink-subtle: #8a8a8a;
+
+  --app-line: #383c42;
+  --app-accent: #4a8fe0;
+  --app-accent-hover: #3b7bc7;
+
+  --app-danger: #e05c52;
+  --app-danger-hover: #c94a40;
+
+  --app-scrollbar: rgb(255 255 255 / 0.22);
+  --app-scrollbar-hover: rgb(255 255 255 / 0.38);
+}
+
+@layer base {
+  html {
+    /* Prevent the iOS tap-to-zoom on the composer. */
+    -webkit-text-size-adjust: 100%;
+  }
+
+  body {
+    background-color: var(--app-base);
+    color: var(--app-ink);
+    font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto,
+      "Helvetica Neue", Arial, sans-serif;
+  }
+
+  /*
+   * A visible, consistent focus ring. The previous build had none, which made
+   * keyboard navigation effectively untrackable.
+   */
+  :focus-visible {
+    outline: 2px solid var(--app-accent);
+    outline-offset: 2px;
+    border-radius: 2px;
+  }
+
+  /* Firefox */
+  * {
+    scrollbar-width: thin;
+    scrollbar-color: var(--app-scrollbar) transparent;
+  }
+
+  /* WebKit */
+  ::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: var(--app-scrollbar);
+    border-radius: 9999px;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background: var(--app-scrollbar-hover);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
