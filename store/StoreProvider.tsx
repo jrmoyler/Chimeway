@@ -23,7 +23,7 @@ import type {
   User,
   UserStatus,
 } from '../types';
-import { getSupabase } from '../lib/supabase';
+import { getSupabase, isSupabaseConfigured } from '../lib/supabase';
 import * as api from '../data/api';
 import { useSession } from './SessionProvider';
 import * as cache from './cache';
@@ -343,7 +343,9 @@ export const StoreProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   }, []);
 
   useEffect(() => {
-    if (!userId || !ready) return;
+    // Local mode has one person in one tab, and every action already updates
+    // the cache optimistically, so there is no stream to subscribe to.
+    if (!userId || !ready || !isSupabaseConfigured) return;
 
     const supabase = getSupabase();
     const channel = supabase

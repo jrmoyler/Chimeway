@@ -19,7 +19,7 @@ import { createTestDb, type TestDb } from './harness';
  */
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..', '..');
-const API_SOURCE = readFileSync(join(ROOT, 'data', 'api.ts'), 'utf8');
+const API_SOURCE = readFileSync(join(ROOT, 'data', 'remoteApi.ts'), 'utf8');
 const STORE_SOURCE = readFileSync(join(ROOT, 'store', 'StoreProvider.tsx'), 'utf8');
 const CLIENT_SOURCE = `${API_SOURCE}\n${STORE_SOURCE}`;
 

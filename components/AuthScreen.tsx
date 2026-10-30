@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { ApiError, signIn, signUp } from '../data/api';
+import { ApiError, isLocalMode, signIn, signUp } from '../data/api';
+import { DEMO_EMAIL, DEMO_PASSWORD } from '../data/localApi';
 
 type Mode = 'signin' | 'signup';
 
@@ -45,6 +46,20 @@ const AuthScreen: React.FC = () => {
     }
   };
 
+  const tryDemo = async () => {
+    if (busy) return;
+    setError(null);
+    setNotice(null);
+    setBusy(true);
+    try {
+      await signIn(DEMO_EMAIL, DEMO_PASSWORD);
+    } catch (err) {
+      setError(err instanceof ApiError ? err.message : 'Could not open the demo.');
+    } finally {
+      setBusy(false);
+    }
+  };
+
   const inputClass =
     'block w-full rounded-md border border-line bg-surface px-3 py-2 text-sm text-ink placeholder:text-ink-subtle focus:border-accent focus:outline-none';
 
@@ -67,6 +82,26 @@ const AuthScreen: React.FC = () => {
               : 'You can create or join a workspace next.'}
           </p>
         </div>
+
+        {isLocalMode && (
+          <div
+            role="note"
+            className="mb-4 rounded-xl border border-line bg-raised p-4 text-sm text-ink-muted"
+          >
+            <p>
+              <span className="font-medium text-ink">Local mode.</span> No server is connected, so
+              accounts and messages are saved in this browser only.
+            </p>
+            <button
+              type="button"
+              onClick={() => void tryDemo()}
+              disabled={busy}
+              className="mt-3 w-full rounded-md border border-line px-4 py-2 text-sm font-medium text-ink transition-colors hover:bg-sunken disabled:cursor-not-allowed disabled:opacity-60"
+            >
+              Try the demo workspace
+            </button>
+          </div>
+        )}
 
         <form
           onSubmit={submit}
