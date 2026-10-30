@@ -15,14 +15,6 @@ const anonKey = import.meta.env['VITE_SUPABASE_ANON_KEY'];
 
 export const isSupabaseConfigured = Boolean(url && anonKey);
 
-/** Describes what is missing, for the setup screen. */
-export function missingConfigKeys(): string[] {
-  const missing: string[] = [];
-  if (!url) missing.push('VITE_SUPABASE_URL');
-  if (!anonKey) missing.push('VITE_SUPABASE_ANON_KEY');
-  return missing;
-}
-
 let client: SupabaseClient<Database> | null = null;
 
 export function getSupabase(): SupabaseClient<Database> {

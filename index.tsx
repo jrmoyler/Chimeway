@@ -3,20 +3,19 @@ import { createRoot } from 'react-dom/client';
 import App from './App';
 import ErrorBoundary from './components/ErrorBoundary';
 import AuthScreen from './components/AuthScreen';
-import SetupScreen from './components/SetupScreen';
 import { SessionProvider, useSession } from './store/SessionProvider';
 import { StoreProvider } from './store/StoreProvider';
-import { isSupabaseConfigured } from './lib/supabase';
 import './index.css';
 
 /**
- * Gates the app on configuration, then on authentication.
+ * Gates the app on authentication.
  *
- * Each failure mode gets its own screen. The previous build rendered nothing
- * when misconfigured, which made a config problem look identical to a crash.
+ * Without Supabase configured the app runs in local mode (see data/api.ts)
+ * rather than stopping at a setup screen, so a deployment with no backend is
+ * still usable.
  */
 const Root: React.FC = () => {
-  const { session, ready } = useSession();
+  const { userId, ready } = useSession();
 
   if (!ready) {
     return (
@@ -31,7 +30,7 @@ const Root: React.FC = () => {
     );
   }
 
-  if (!session) return <AuthScreen />;
+  if (!userId) return <AuthScreen />;
 
   return (
     <StoreProvider>
@@ -48,13 +47,9 @@ if (!rootElement) {
 createRoot(rootElement).render(
   <React.StrictMode>
     <ErrorBoundary>
-      {isSupabaseConfigured ? (
-        <SessionProvider>
-          <Root />
-        </SessionProvider>
-      ) : (
-        <SetupScreen />
-      )}
+      <SessionProvider>
+        <Root />
+      </SessionProvider>
     </ErrorBoundary>
   </React.StrictMode>,
 );

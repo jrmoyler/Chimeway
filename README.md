@@ -20,9 +20,20 @@ cp .env.example .env     # then fill in your project URL and anon key
 npm run dev
 ```
 
-The app opens at <http://localhost:3000>. If `.env` is missing or incomplete,
-Chimeway shows a setup screen explaining exactly which variables it needs
-rather than failing silently.
+The app opens at <http://localhost:3000>.
+
+### Local mode (no backend)
+
+If `VITE_SUPABASE_URL` / `VITE_SUPABASE_ANON_KEY` are not set - locally or on
+a host such as Vercel - Chimeway runs in **local mode** instead of stopping at a
+setup screen. Accounts, workspaces and messages are stored in the visitor's
+browser (`localStorage`), seeded with a small demo workspace; the sign-in page
+offers a one-click demo account (`demo@chimeway.app` / `demo1234`).
+
+Local mode is single-browser: nothing syncs between people or devices, files
+are limited to 1 MB, and AI summaries are unavailable because the Gemini key
+lives in the edge function. Set the two variables and redeploy to switch to the
+real backend; the code path is chosen at build time in `data/api.ts`.
 
 ### 1. Create a Supabase project
 
@@ -109,7 +120,9 @@ supabase/
   seed.sql         Local-only sample workspace
 
 data/              API layer: every call the client makes
-  api.ts           Queries, mutations, uploads, AI
+  api.ts           Picks the backend: Supabase, or local mode
+  remoteApi.ts     Supabase queries, mutations, uploads, AI
+  localApi.ts      Same API over localStorage, for running without a backend
   mappers.ts       Database rows -> domain objects
 
 store/
